@@ -73,31 +73,72 @@ global _start
 
 
 
-_start:
+_start:    
+    mov rax, 0
+    mov rbx, 0                      ; index
+
+    ; jmp print_x
     jmp check_lens
 
-check_lens:
-    mov rbx, x_len
-    add rbx, '0'
-    mov [result], rbx
-    print [result], 1
+print_x:
+    mov eax, [x + 4*rbx]
+    dprint
     print space, slen
 
-    mov rbx, y_len
-    add rbx, '0'
-    mov [result], rbx
-    print [result], 1
-    print newline, nlen    
+    inc rbx
+    cmp rbx, x_len
+    jne print_x
 
-    ; mov rax, y_len
-    ; cmp x_len, rax
-    ; jne print_not_equal
+    mov rbx, 0
+    print newline, nlen
+    jmp print_y
 
-    jmp end
+print_y:
+    mov eax, [y + 4*rbx]
+    dprint
+    print space, slen
+
+    inc rbx
+    cmp rbx, y_len
+    jne print_y
+
+    jmp check_lens
+
+
+; --------------------------------------------------
+; Checking lengths of arrays
+check_lens:
+    mov eax, x_len
+    mov ebx, y_len
+
+    cmp eax, ebx
+    jne print_not_equal
+
+    mov rax, 0
+    mov rbx, 0
+    jmp sum
 
 print_not_equal:
     print not_equal_message, len_not_equal
     jmp end
+; --------------------------------------------------
+
+sum:
+    add eax, [x + 4*rbx]
+    ; sub eax, [y + 4*rbx]
+
+    dprint
+    print newline, nlen
+
+    inc rbx
+    cmp rbx, x_len
+    jne sum
+
+    jmp print_average
+
+print_average:
+    dprint
+    print newline, nlen
 
 end:
     print newline, nlen
@@ -110,8 +151,8 @@ end:
 section .data
     x dd 5, 3, 2, 6, 1, 7, 4
     y dd 0, 10, 1, 9, 2, 8, 5
-    x_len equ $ - x
-    y_len equ $ - y
+    x_len equ (($ - x)/8)
+    y_len equ (($ - y)/4)
     
     ; Done message for end of program
     done_message db 'Done', 0xA, 0xD
@@ -131,4 +172,4 @@ section .data
 
 
 section .bss
-        result resb 1
+    result resb 1
