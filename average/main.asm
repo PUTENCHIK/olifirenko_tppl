@@ -73,11 +73,10 @@ global _start
 
 
 
-_start:    
+_start:
     mov rax, 0
     mov rbx, 0                      ; index
 
-    ; jmp print_x
     jmp check_lens
 
 print_x:
@@ -124,34 +123,74 @@ print_not_equal:
 ; --------------------------------------------------
 
 sum:
-    add eax, [x + 4*rbx]
-    ; sub eax, [y + 4*rbx]
-
-    dprint
-    print newline, nlen
+    add eax, [x + 4*rbx]                        ; add rax x[rbx]
+    sub eax, [y + 4*rbx]                        ; subtract rax y[rbx]
 
     inc rbx
-    cmp rbx, x_len
+    cmp rbx, x_len                              ; while rbx != x_len
     jne sum
+
+    print average_message, len_average
+    jmp print_minus
+
+print_minus:
+    cmp eax, 0                                  ; if sum is less than 0, print minus
+    jnl print_average
+    print minus, mlen
+    neg eax                                     ; invert sum
 
     jmp print_average
 
 print_average:
-    dprint
-    print newline, nlen
+    mov rcx, x_len
+    div rcx                                     ; rax (sum) / rcx (x_len)
+    dprint                                      ; print rax
 
-end:
+    cmp rdx, 0                                  ; if average is int: end
+    je print_done
+
+    jmp print_point
+
+print_point:
+    print point, plen                           ; print point
+    mov rbx, 0
+
+    jmp print_frac
+
+print_frac:
+    mov rcx, 10
+    mov rax, rdx                                ; old_rdx *= 10
+    mul rcx
+
+    mov rcx, x_len
+    div rcx                                     ; 10*old_rdx // x_len
+
+    dprint
+    inc rbx
+
+    cmp rdx, 0
+    je print_done
+
+    cmp rbx, 10
+    jle print_frac
+
+    jmp print_done
+
+print_done:
     print newline, nlen
     print done_message, len_done
 
+    jmp end
+
+end:
     mov rax, 60
     xor rdi, rdi
     syscall
 
 section .data
-    x dd 5, 3, 2, 6, 1, 7, 4
-    y dd 0, 10, 1, 9, 2, 8, 5
-    x_len equ (($ - x)/8)
+    x dd 5, 3, 1, 4
+    x_len equ (($ - x)/4)
+    y dd 0, 2, 1, -3
     y_len equ (($ - y)/4)
     
     ; Done message for end of program
@@ -166,9 +205,21 @@ section .data
 	space db ' '
 	slen equ $ - space
 
+    ; Symbol minus
+    minus db '-'
+    mlen equ $ - minus
+
+    ; Symbol point
+    point db '.'
+    plen equ $ - point
+
     ; Message lens of array are not equal
-    not_equal_message db 'Lens of array are not equal', 0xA, 0xD
+    not_equal_message db 'Lens of arrays are not equal', 0xA, 0xD
     len_not_equal equ $ - not_equal_message
+
+    ; Message average
+    average_message db 'Average of x-y = '
+    len_average equ $ - average_message
 
 
 section .bss
