@@ -26,7 +26,7 @@ odd:
 end:
 
 section .data
-value db 16
+	value db 16
 	message1 db 'Is odd', 0xA, 0xD
 	len1 equ $ - message1
 	message2 db 'Is even', 0xA, 0xD
