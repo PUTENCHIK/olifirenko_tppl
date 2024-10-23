@@ -130,7 +130,6 @@ sum:
     cmp rbx, x_len                              ; while rbx != x_len
     jne sum
 
-    print average_message, len_average
     jmp print_minus
 
 print_minus:
@@ -188,9 +187,9 @@ end:
     syscall
 
 section .data
-    x dd 5, 3, 1, 4
+    x dd 5, 3, 2, 6, 1, 7, 4
     x_len equ (($ - x)/4)
-    y dd 0, 2, 1, -3
+    y dd 0, 10, 1, 9, 2, 8, 5
     y_len equ (($ - y)/4)
     
     ; Done message for end of program
@@ -216,10 +215,6 @@ section .data
     ; Message lens of array are not equal
     not_equal_message db 'Lens of arrays are not equal', 0xA, 0xD
     len_not_equal equ $ - not_equal_message
-
-    ; Message average
-    average_message db 'Average of x-y = '
-    len_average equ $ - average_message
 
 
 section .bss
