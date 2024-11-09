@@ -1,1 +1,1 @@
-from .myinterpreter import Interpreter
+from .parser import Parser

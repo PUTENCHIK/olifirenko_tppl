@@ -2,8 +2,11 @@ from enum import Enum, auto
 
 
 class TokenType(Enum):
-    INTEGER = auto()
+    NUMBER = auto()
+    # DOT = auto()
     OPERATOR = auto()
+    LPAREN = auto()
+    RPAREN = auto()
     EOL = auto()
 
 
