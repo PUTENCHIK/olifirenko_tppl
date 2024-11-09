@@ -26,35 +26,3 @@ class Notations:
             warn(f"There are extra operands: {list(operands.queue)}")
         
         return " ".join(result)
-
-    # @classmethod
-    # def calc_prefix_notation(cls, s: str) -> float:
-    #     tokens = cls.to_infix_notation(s).split()
-    #     first, operator, second = None, None, None
-
-    #     result = None
-    #     for token in tokens:
-    #         if token in cls.oprs:
-    #             operator = token
-    #         else:
-    #             if first is None:
-    #                 first = float(token)
-    #             else:
-    #                 second = float(token)
-            
-    #         if second is not None:
-    #             if result is None:
-    #                 result = first
-                
-    #             match operator:
-    #                 case "+":
-    #                     result += second
-    #                 case "-":
-    #                     result -= second
-    #                 case "*":
-    #                     result *= second
-    #                 case _:
-    #                     result /= second
-    #             second = None
-        
-    #     return result
