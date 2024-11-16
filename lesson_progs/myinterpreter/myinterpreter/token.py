@@ -3,8 +3,7 @@ from enum import Enum, auto
 
 class TokenType(Enum):
     NUMBER = auto()
-    # DOT = auto()
-    OPERATOR = auto()
+    OPERATOR = auto()    
     LPAREN = auto()
     RPAREN = auto()
     EOL = auto()

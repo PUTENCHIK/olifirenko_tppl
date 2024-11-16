@@ -1,6 +1,6 @@
 from .token import TokenType
 from .lexer import Lexer
-from .ast import BinOp, Number
+from .ast import BinOp, Number, UnaryOp
 
 
 class Parser():
@@ -17,6 +17,14 @@ class Parser():
         
     def __factor(self):
         token = self._current_token
+        
+        if token.value == "+":
+            self.__check_token(TokenType.OPERATOR)
+            return UnaryOp(token, self.__factor())
+        elif token.value == "-":
+            self.__check_token(TokenType.OPERATOR)
+            return UnaryOp(token, self.__factor())
+            
         if token.type_ == TokenType.NUMBER:
             self.__check_token(TokenType.NUMBER)
             return Number(token)

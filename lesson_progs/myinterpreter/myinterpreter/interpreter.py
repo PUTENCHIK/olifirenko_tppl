@@ -1,5 +1,5 @@
 from .parser import Parser
-from .ast import Number, BinOp
+from .ast import Number, BinOp, UnaryOp
 
 class NodeVisitor:
     
@@ -17,6 +17,8 @@ class Interpreter(NodeVisitor):
             return self._visit_number(node)
         elif isinstance(node, BinOp):
             return self._visit_binop(node)
+        elif isinstance(node, UnaryOp):
+            return self._visin_unaryop(node)
         
     def _visit_number(self, node: Number) -> float:
         return float(node.token.value)
@@ -33,7 +35,15 @@ class Interpreter(NodeVisitor):
                 return self.visit(node.left) / self.visit(node.right)
             case _:
                 raise RuntimeError(f"invalid operator: {node.op.value}")
-            
+    
+    def _visin_unaryop(self, node: UnaryOp) -> float:
+        match node.op.value:
+            case "+":
+                return self.visit(node.expr)
+            case "-":
+                return -self.visit(node.expr)
+            case _:
+                raise RuntimeError(f"invalid unary operator: {node.op.value}")
         
     def eval(self, code: str) -> float:
         tree = self._parser.eval(code)

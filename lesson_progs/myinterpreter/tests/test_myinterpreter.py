@@ -61,6 +61,12 @@ class TestMyinterpreter:
         with pytest.raises(SyntaxError):
             assert interpreter.eval("(2") == 2
             assert interpreter.eval("2)") == 2
+            
+    def test_unaty_operators(self, interpreter):
+        assert interpreter.eval("-2") == -2
+        assert interpreter.eval("- 2 + 2") == 0
+        assert interpreter.eval("--2") == 2
+        assert interpreter.eval("----++++2") == 2
         
     # def test_null(self, interpreter):
     #     assert interpreter.eval("") == None

@@ -26,3 +26,13 @@ class BinOp(Node):
         # return f"{self.__class__.__name__}{self.op.value}({self.left}, {self.right})"
         # return f"{self.__class__.__name__}({self.left} {self.op.value} {self.right})"
         return f"({self.left} {self.op.value} {self.right})"
+
+
+class UnaryOp(Node):
+    
+    def __init__(self, op: Token, expr: Node) -> None:
+        self.op = op
+        self.expr = expr
+        
+    def __str__(self) -> str:
+        return f"({self.op}{self.expr})"
