@@ -1,5 +1,8 @@
-from myinterpreter import Parser
+from myinterpreter import Parser, Interpreter
+from pprint import pprint
 
 
-p = Parser()
-print(p.eval("2 * (2 - 1 * (12 - 9))"))
+v = "0 - 1 - 2/2"
+i = Interpreter()
+print(i._parser.eval(v))
+print(i.eval(v))

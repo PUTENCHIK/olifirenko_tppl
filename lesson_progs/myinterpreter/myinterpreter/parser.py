@@ -35,18 +35,18 @@ class Parser():
                 break
             token = self._current_token
             self.__check_token(TokenType.OPERATOR)
-            return BinOp(result, token, self.__factor())
+            result = BinOp(result, token, self.__factor())
         return result
     
     def __expr(self) -> BinOp:
         result = self.__term()
-        while self._current_token and (self._current_token.type_ == TokenType.OPERATOR):
+        while self._current_token and self._current_token.type_ == TokenType.OPERATOR:
             if self._current_token.value not in ('+', '-'):
                 break
             token = self._current_token
             self.__check_token(TokenType.OPERATOR)
         
-            return BinOp(result, token, self.__term())
+            result = BinOp(result, token, self.__term())
         return result
     
     def eval(self, s: str) -> BinOp:
