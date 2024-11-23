@@ -11,8 +11,8 @@ class Number(Node):
         self.token = token
         
     def __str__(self) -> str:
-        # return f"{self.__class__.__name__} ({self.token})"
-        return f"{self.token}"
+        return f"{self.__class__.__name__} ({self.token})"
+        # return f"{self.token}"
     
     
 class BinOp(Node):
@@ -23,9 +23,9 @@ class BinOp(Node):
         self.right = right
         
     def __str__(self) -> str:
-        # return f"{self.__class__.__name__}{self.op.value}({self.left}, {self.right})"
+        return f"{self.__class__.__name__}{self.op.value}({self.left}, {self.right})"
         # return f"{self.__class__.__name__}({self.left} {self.op.value} {self.right})"
-        return f"({self.left} {self.op.value} {self.right})"
+        # return f"({self.left} {self.op.value} {self.right})"
 
 
 class UnaryOp(Node):
@@ -35,4 +35,5 @@ class UnaryOp(Node):
         self.expr = expr
         
     def __str__(self) -> str:
-        return f"({self.op}{self.expr})"
+        return f"{self.__class__.__name__}{self.op.value}({self.expr})"
+        # return f"({self.op}{self.expr})"
