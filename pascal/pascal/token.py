@@ -2,19 +2,21 @@ from enum import Enum, auto
 
 
 class TokenType(Enum):
-    DOT = auto()
-    BEGIN = auto()
-    END = auto()
-    
-    NUMBER = auto()
-    OPERATOR = auto() 
+    BEGIN = auto()              # BEGIN
+    END = auto()                # END
+
+    NUMBER = auto()             # int | float
+    VARIABLE = auto()           # variable
+    OPERATOR = auto()           # + | - | / | *
        
-    LPAREN = auto()
-    RPAREN = auto()
-    ASSIGN = auto
-    SEMICOLON = auto()
+    LPAREN = auto()             # (
+    RPAREN = auto()             # )
+    EQUAL = auto()              # =
+    COLON = auto()              # :
+    SEMICOLON = auto()          # ;
+    DOT = auto()                # .
     
-    EOL = auto()
+    EOL = auto()                # \0
     
     
 class Token:

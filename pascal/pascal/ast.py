@@ -32,3 +32,39 @@ class UnaryOp(Node):
         
     def __str__(self) -> str:
         return f"({self.op}{self.expr})"
+
+
+class Variable(Node):
+
+    def __init__(self, name: Token):
+        self.name = name
+
+    def __str__(self) -> str:
+        return f"{__class__.__name__}({self.name})"
+    
+
+class Assignment(Node):
+
+    def __init__(self, var: Token, expr: Node):
+        self.var = var
+        self.expr = expr
+
+    def __str__(self) -> str:
+        return f"{__class__.__name__}({self.var} := {self.expr})"
+    
+
+class Statement(Node):
+
+    def __init__(self, value: Node):
+        self.value = value
+
+    def __str__(self) -> str:
+        return f"{__class__.__name__}({self.value})"
+    
+class Empty(Node):
+    
+    def __init__(self):
+        pass
+
+    def __str__(self) -> str:
+        return f"{__class__.__name__}"
