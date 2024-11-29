@@ -78,17 +78,17 @@ class Parser():
         token = self._current_token
 
         if token.type_ == TokenType.VARIABLE:
-            return self.__assignment()
+            return Statement(self.__assignment())
         elif token.type_ == TokenType.BEGIN:
-            return self.__complex_statement(False)
+            return Statement(self.__complex_statement(False))
         elif token.value == "" or token.type_ == TokenType.END:
-            return Empty()
+            return Statement(Empty())
         else:
             raise InvalidSyntaxOfStatement
         
     def __statement_list(self, expects_last_semicolon: bool):
         result = self.__statement()
-        if isinstance(result, Empty):
+        if isinstance(result.value, Empty):
             return result
         
         if expects_last_semicolon:
@@ -103,7 +103,7 @@ class Parser():
 
         while self._current_token.type_ not in (TokenType.EOL, TokenType.END):
             second = self.__statement_list(expects_last_semicolon)
-            result = StatementList(result, second) if not isinstance(second, Empty) else result
+            result = StatementList(result, second)
         
         return result
     
@@ -113,7 +113,7 @@ class Parser():
         result = self.__statement_list(expects_last_semicolon)
         self.__check_token(TokenType.END)
         
-        return ComplexStatement(result) if isinstance(result, ComplexStatement) else result
+        return ComplexStatement(result)
     
 
     def __program(self) -> Program:

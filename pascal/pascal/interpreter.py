@@ -48,9 +48,8 @@ class Interpreter(NodeVisitor):
         elif isinstance(node, Program):
             return self._visit_program(node)
         
-        else:
+        # else:
             # raise Exception(f"Unkown node in tree: {type(node).__name__}")
-            pass
         
     def _visit_number(self, node: Number) -> float:
         return float(node.token.value)
@@ -65,9 +64,8 @@ class Interpreter(NodeVisitor):
                 return self.visit(node.left) * self.visit(node.right)
             case "/":
                 return self.visit(node.left) / self.visit(node.right)
-            case _:
+            # case _:
                 # raise RuntimeError(f"invalid operator: {node.op.value}")
-                pass
     
     def _visit_unaryop(self, node: UnaryOp) -> float:
         match node.op.value:
@@ -75,9 +73,8 @@ class Interpreter(NodeVisitor):
                 return self.visit(node.expr)
             case "-":
                 return -self.visit(node.expr)
-            case _:
+            # case _:
                 # raise RuntimeError(f"invalid unary operator: {node.op.value}")
-                pass
     
     def _visit_variable(self, node: Variable) -> float:
         if node.name.value in self._variables:
