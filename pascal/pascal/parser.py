@@ -1,6 +1,7 @@
 from .token import TokenType
 from .lexer import Lexer
-from .ast import BinOp, Number, UnaryOp, Variable, Assignment, Statement, Empty
+from .ast import (BinOp, Number, UnaryOp, Variable, Assignment, Statement,
+                  Empty, StatementList, ComplexStatement, Program)
 
 
 class Parser():
@@ -78,15 +79,53 @@ class Parser():
         if token.type_ == TokenType.VARIABLE:
             return self.__assignment()
         elif token.type_ == TokenType.BEGIN:
-            # compound_statement
-            pass
-        elif token.value == "":
-            return Statement(Empty())
+            return self.__complex_statement(False)
+        elif token.value == "" or token.type_ == TokenType.END:
+            return Empty()
         else:
             raise SyntaxError("Invalid syntax of statement")
+        
+    def __statement_list(self, expects_last_semicolon: bool):
+        result = self.__statement()
+        if isinstance(result, Empty):
+            return result
+        
+        if expects_last_semicolon:
+            self.__check_token(TokenType.SEMICOLON)
+        else:
+            if self._current_token.type_ == TokenType.END:
+                return result
+            else:
+                self.__check_token(TokenType.SEMICOLON)
+                if self._current_token.type_ == TokenType.END:
+                    raise SyntaxError("Extra ; in end of statement list")
+
+        while self._current_token.type_ not in (TokenType.EOL, TokenType.END):
+            second = self.__statement_list(expects_last_semicolon)
+            result = StatementList(result, second) if not isinstance(second, Empty) else result
+        
+        return result
+    
+
+    def __complex_statement(self, expects_last_semicolon: bool) -> ComplexStatement:
+        self.__check_token(TokenType.BEGIN)
+        result = self.__statement_list(expects_last_semicolon)
+        self.__check_token(TokenType.END)
+        
+        return ComplexStatement(result) if isinstance(result, ComplexStatement) else result
+    
+
+    def __program(self) -> Program:
+        comp = self.__complex_statement(True)
+        self.__check_token(TokenType.DOT)
+        self.__check_token(TokenType.EOL)
+
+        return Program(comp)
+
     
     def eval(self, s: str) -> BinOp:
         self._lexer.init(s)
         self._current_token = self._lexer.next()
         # return self.__expr()
-        return self.__statement()
+        # return self.__statement()
+        return self.__program()

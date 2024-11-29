@@ -43,7 +43,7 @@ class Lexer:
     
     def next(self) -> Token:
         while self._current_char:
-            if self._current_char.isspace():
+            if self._current_char.isspace() or self._current_char == "\n":
                 self.__skip()
                 continue
             elif self._current_char.isdigit():
@@ -76,6 +76,14 @@ class Lexer:
                 val = self._current_char
                 self.__forward()
                 return Token(TokenType.EQUAL, val)
+            elif self._current_char == ';':
+                val = self._current_char
+                self.__forward()
+                return Token(TokenType.SEMICOLON, val)
+            elif self._current_char == '.':
+                val = self._current_char
+                self.__forward()
+                return Token(TokenType.DOT, val)
             else:
                 raise SyntaxError(f"Bad token: {self._current_char}")
         return Token(TokenType.EOL, "")
