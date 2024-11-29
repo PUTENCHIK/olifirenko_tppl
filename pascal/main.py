@@ -1,7 +1,6 @@
-from pascal.parser import Parser
+from pascal import Interpreter
 
 
-print("\n\n")
 code = """
 BEGIN
     y: = 2;
@@ -15,7 +14,7 @@ BEGIN
 END.
 """
 
-p = Parser()
-result = p.eval(code)
+i = Interpreter()
+result = i.eval(code)
 
 print(result)
