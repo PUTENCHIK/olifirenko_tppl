@@ -2,6 +2,7 @@ from .token import TokenType
 from .lexer import Lexer
 from .ast import (BinOp, Number, UnaryOp, Variable, Assignment, Statement,
                   Empty, StatementList, ComplexStatement, Program)
+from .exceptions import InvalidTokenOrder, InvalidFactor, InvalidSyntaxOfStatement, ExtraSemicolon
 
 
 class Parser():
@@ -14,7 +15,7 @@ class Parser():
         if self._current_token.type_ == type_:
             self._current_token = self._lexer.next()
         else:
-            raise SyntaxError(f"Invalid token order; expected {type_}, gotten {self._current_token.type_}")  
+            raise InvalidTokenOrder(str(type_), str(self._current_token.type_))
         
     def __variable(self):
         token = self._current_token
@@ -43,7 +44,7 @@ class Parser():
             self.__check_token(TokenType.VARIABLE)
             return Variable(token)
         else:
-            raise SyntaxError("Invalid factor")
+            raise InvalidFactor(str(token))
         
     def __term(self) -> BinOp:
         result = self.__factor()
@@ -83,7 +84,7 @@ class Parser():
         elif token.value == "" or token.type_ == TokenType.END:
             return Empty()
         else:
-            raise SyntaxError("Invalid syntax of statement")
+            raise InvalidSyntaxOfStatement
         
     def __statement_list(self, expects_last_semicolon: bool):
         result = self.__statement()
@@ -98,7 +99,7 @@ class Parser():
             else:
                 self.__check_token(TokenType.SEMICOLON)
                 if self._current_token.type_ == TokenType.END:
-                    raise SyntaxError("Extra ; in end of statement list")
+                    raise ExtraSemicolon()
 
         while self._current_token.type_ not in (TokenType.EOL, TokenType.END):
             second = self.__statement_list(expects_last_semicolon)
@@ -126,6 +127,5 @@ class Parser():
     def eval(self, s: str) -> BinOp:
         self._lexer.init(s)
         self._current_token = self._lexer.next()
-        # return self.__expr()
-        # return self.__statement()
+
         return self.__program()

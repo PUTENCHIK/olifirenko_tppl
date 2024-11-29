@@ -1,4 +1,5 @@
 from .token import Token, TokenType
+from .exceptions import TooManyDotsInNumber, BadToken
 
 
 class Lexer:
@@ -29,7 +30,7 @@ class Lexer:
                (self._current_char.isdigit() or self._current_char == '.')):
             result += self._current_char
             if result.count('.') > 1:
-                raise SyntaxError("Too many dots in number")
+                raise TooManyDotsInNumber
             self.__forward()
         return result
     
@@ -85,5 +86,5 @@ class Lexer:
                 self.__forward()
                 return Token(TokenType.DOT, val)
             else:
-                raise SyntaxError(f"Bad token: {self._current_char}")
+                raise BadToken(self._current_char)
         return Token(TokenType.EOL, "")

@@ -1,6 +1,7 @@
 from .parser import Parser
 from .ast import (BinOp, Number, UnaryOp, Variable, Assignment, Statement,
                   Empty, StatementList, ComplexStatement, Program)
+from .exceptions import UnkownVariable
 
 
 class NodeVisitor:
@@ -48,7 +49,8 @@ class Interpreter(NodeVisitor):
             return self._visit_program(node)
         
         else:
-            raise Exception(f"Unkown node in tree: {type(node).__name__}")
+            # raise Exception(f"Unkown node in tree: {type(node).__name__}")
+            pass
         
     def _visit_number(self, node: Number) -> float:
         return float(node.token.value)
@@ -64,7 +66,8 @@ class Interpreter(NodeVisitor):
             case "/":
                 return self.visit(node.left) / self.visit(node.right)
             case _:
-                raise RuntimeError(f"invalid operator: {node.op.value}")
+                # raise RuntimeError(f"invalid operator: {node.op.value}")
+                pass
     
     def _visit_unaryop(self, node: UnaryOp) -> float:
         match node.op.value:
@@ -73,22 +76,20 @@ class Interpreter(NodeVisitor):
             case "-":
                 return -self.visit(node.expr)
             case _:
-                raise RuntimeError(f"invalid unary operator: {node.op.value}")
+                # raise RuntimeError(f"invalid unary operator: {node.op.value}")
+                pass
     
     def _visit_variable(self, node: Variable) -> float:
         if node.name.value in self._variables:
             return self._variables[node.name.value]
         else:
-            raise Exception(f"Variable '{node.name.value}' is not defined")
+            raise UnkownVariable(node.name.value)
 
     def _visit_assignment(self, node: Assignment) -> None:
         self._variables[node.var.value] = self.visit(node.expr)
 
     def _visit_statement(self, node: Statement) -> None:
         self.visit(node.value)
-
-    # def _visit_empty(self, node: Empty) -> None:
-    #     pass
 
     def _visit_statement_list(self, node: StatementList) -> None:
         self.visit(node.first)
