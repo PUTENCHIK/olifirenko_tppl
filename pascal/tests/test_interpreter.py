@@ -14,7 +14,7 @@ def interpreter(scope="function") -> Interpreter:
 class TestInterpreter:
     
     def test_empty_program(self, interpreter):
-        assert interpreter.eval("BEGIN END.") == dict()
+        assert interpreter.eval("BEGIN END.").vars() == dict()
 
     def test_bad_token(self, interpreter):
         with pytest.raises(BadToken):
@@ -41,14 +41,14 @@ class TestInterpreter:
                 a := 1 + 2 / 4;
             END.
             """
-        ) == {'a': 1.5}
+        ).vars() == {'a': 1.5}
         assert interpreter.eval(
             """
             BEGIN
                 a := +-+-1;
             END.
             """
-        ) == {'a': 1.0}
+        ).vars() == {'a': 1.0}
     
     def test_assignment_variable(self, interpreter):
         assert interpreter.eval(
@@ -59,7 +59,7 @@ class TestInterpreter:
                 a := 3;
             END.
             """
-        ) == {'a': 3.0, 'b': 1.0}
+        ).vars() == {'a': 3.0, 'b': 1.0}
     
     def test_difficult_assignment(self, interpreter):
         assert interpreter.eval(
@@ -69,7 +69,7 @@ class TestInterpreter:
                 D := b*b + 4*a*c;
             END.
             """
-        ) == {'a': 1.0, 'b': -5.0, 'c': 6.0, 'D': 49}
+        ).vars() == {'a': 1.0, 'b': -5.0, 'c': 6.0, 'D': 49}
     
     def test_complex_statements(self, interpreter):
         assert interpreter.eval(
@@ -78,7 +78,7 @@ class TestInterpreter:
                 BEGIN END;
             END.
             """
-        ) == dict()
+        ).vars() == dict()
         assert interpreter.eval(
             """
             BEGIN
@@ -89,7 +89,7 @@ class TestInterpreter:
                 END;
             END.
             """
-        ) == {'a': 1, 'b': 2}
+        ).vars() == {'a': 1, 'b': 2}
     
     def test_invalid_token_order(self, interpreter):
         with pytest.raises(InvalidTokenOrder):

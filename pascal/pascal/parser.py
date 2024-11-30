@@ -109,6 +109,7 @@ class Parser():
     
 
     def __complex_statement(self, expects_last_semicolon: bool) -> ComplexStatement:
+        variables = {}
         self.__check_token(TokenType.BEGIN)
         result = self.__statement_list(expects_last_semicolon)
         self.__check_token(TokenType.END)

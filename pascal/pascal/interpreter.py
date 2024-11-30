@@ -2,6 +2,7 @@ from .parser import Parser
 from .ast import (BinOp, Number, UnaryOp, Variable, Assignment, Statement,
                   Empty, StatementList, ComplexStatement, Program)
 from .exceptions import UnkownVariable
+from .namespace import Namespace
 
 
 class NodeVisitor:
@@ -14,7 +15,7 @@ class Interpreter(NodeVisitor):
     
     def __init__(self) -> None:
         self._parser = Parser()
-        self._variables = dict()
+        self.namespace = None
         
     def visit(self, node):
         if isinstance(node, Number):
@@ -77,13 +78,14 @@ class Interpreter(NodeVisitor):
                 # raise RuntimeError(f"invalid unary operator: {node.op.value}")
     
     def _visit_variable(self, node: Variable) -> float:
-        if node.name.value in self._variables:
-            return self._variables[node.name.value]
-        else:
+        value = self.namespace.get(node.name.value)
+        if value is None:
             raise UnkownVariable(node.name.value)
+        
+        return value
 
     def _visit_assignment(self, node: Assignment) -> None:
-        self._variables[node.var.value] = self.visit(node.expr)
+        self.namespace.set(node.var.value, self.visit(node.expr))
 
     def _visit_statement(self, node: Statement) -> None:
         self.visit(node.value)
@@ -94,14 +96,22 @@ class Interpreter(NodeVisitor):
             self.visit(node.second)
 
     def _visit_complex_statement(self, node: ComplexStatement) -> None:
-        self.visit(node.list_)
+        inner_namespace = Namespace(self.namespace)
+        if self.namespace is not None:
+            self.namespace.add_inner(inner_namespace)
 
-    def _visit_program(self, node: Program) -> dict:
+        self.namespace = inner_namespace
+        self.visit(node.list_)
+        if self.namespace.parent is not None:
+            self.namespace = self.namespace.parent
+
+    def _visit_program(self, node: Program) -> Namespace:
         self.visit(node.comp_statement)
 
-        return self._variables
+        return self.namespace
         
-    def eval(self, code: str) -> float:
+    def eval(self, code: str) -> Namespace:
         tree = self._parser.eval(code)
+        self.namespace = None
         
         return self.visit(tree)
