@@ -1,5 +1,27 @@
 import socket
+from threading import Thread
 from .interpreter import Interpreter, Parser
+
+
+def process_client(conn):
+    while True:
+        message = conn.recv(1024)
+        print(f"Message: {message.decode()}")
+        if message in (b"exit", b""):
+            conn.send(b"Program ended")
+            break
+        
+        interpreter = Interpreter()
+        try:
+            if message.startswith(b"@"):
+                parser = Parser()
+                result = parser.eval(message[1:].decode())
+            else:
+                result = interpreter.eval(message.decode())
+                
+            conn.send(str(result).encode())
+        except (RuntimeError, SyntaxError) as e:
+            conn.send(f"Error: {e}".encode())
 
 
 def start_server(host, port) -> None:
@@ -12,21 +34,4 @@ def start_server(host, port) -> None:
             conn, addr = sock.accept()
             print(f"Connected: {addr}")
             
-            while True:
-                message = conn.recv(1024)
-                print(f"Message: {message.decode()}")
-                if message in (b"exit", b""):
-                    conn.send(b"Program ended")
-                    break
-                
-                interpreter = Interpreter()
-                try:
-                    if message.startswith(b"@"):
-                        parser = Parser()
-                        result = parser.eval(message[1:].decode())
-                    else:
-                        result = interpreter.eval(message.decode())
-                        
-                    conn.send(str(result).encode())
-                except (RuntimeError, SyntaxError) as e:
-                    conn.send(f"Error: {e}".encode())
+            Thread(target=process_client, args=(conn, )).start()
