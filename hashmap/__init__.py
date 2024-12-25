@@ -1,0 +1,1 @@
+from hashmap.hashmap import *
